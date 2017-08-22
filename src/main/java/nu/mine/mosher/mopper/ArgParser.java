@@ -7,6 +7,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.util.stream.Collectors.toList;
 
+// TODO handle POSIX "-W" option
 @SuppressWarnings("unused")
 public final class ArgParser<T> {
     private final Options<T> opts;
@@ -28,6 +29,7 @@ public final class ArgParser<T> {
         final ListIterator<Arg> i = as.listIterator();
         while (i.hasNext()) {
             final Arg a = i.next();
+            // TODO if POSIXLY_CORRECT, non-option also terminates
             if (a.isTerminator()) {
                 break;
             }
@@ -78,7 +80,7 @@ public final class ArgParser<T> {
             final Arg next = i.next();
             if (next.isNamed() && optional) {
                 // for optional values, stop at next option-type arg
-                // TODO but POSIX wants optional args to be next to their option, without a space
+                // TODO if POSIXLY_CORRECT, only allow optional args to be next to their option, without a space
                 // and if it has a space, then treat it as the next option instead.
                 i.previous();
                 break;
@@ -92,7 +94,7 @@ public final class ArgParser<T> {
 
     private static void handleDashDashTerminator(final List<Arg> as) {
         final AtomicBoolean terminated = new AtomicBoolean();
-
+        // TODO if POSIXLY_CORRECT, non-option also terminates
         as.forEach(a -> {
             if (a.isTerminator()) {
                 terminated.set(true);

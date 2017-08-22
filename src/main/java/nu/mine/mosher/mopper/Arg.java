@@ -126,4 +126,53 @@ class Arg {
     public void terminate() {
         this.terminated = true;
     }
+
+/* TODO, redo parsing:
+
+-
+val: "-"
+posixTerminator: true
+
+--
+ind: "--"
+terminator: true
+posixTerminator: true
+
+-a
+ind: "-"
+opt: "a"
+
+--aa
+ind: "--"
+opt: "aa"
+
+-ab
+ind: "-"
+opt: "a"
+rest: b
+
+-av
+ind: "-"
+opt: "a"
+rest: v
+
+v
+val: "v"
+posixTerminator: true
+
+ --aa=v
+ind: "--"
+opt: "aa"
+val: "v"
+
+aa=v
+opt: "aa"
+val: "v"
+
+-W
+ind: "-"
+opt: "W"
+posixVendor: true
+
+*/
 }
