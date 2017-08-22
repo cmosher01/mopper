@@ -1,0 +1,24 @@
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven {
+        url 'http://mosher.mine.nu/maven'
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'maven-publish'
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+    repositories {
+        mavenLocal()
+    }
+}
+
+group = 'nu.mine.mosher.mopper'
+version = '1.0.0-SNAPSHOT'
