@@ -1,0 +1,5 @@
+---
+mopper:
+  build: .
+  ports:
+    - 80
