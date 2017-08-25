@@ -1,5 +1,8 @@
 package nu.mine.mosher.mopper;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class Arg2 {
     private final String org;
 
@@ -15,9 +18,14 @@ public class Arg2 {
 
 
 
+    private static final boolean USE_REGEX_PARSER = false;
     public Arg2(final String arg) {
         this.org = arg;
-        parse();
+        if (USE_REGEX_PARSER) {
+            parseRegEx();
+        } else {
+            parse();
+        }
     }
 
     public String ind() {
@@ -55,40 +63,118 @@ public class Arg2 {
 
 
     public void terminate() {
-        this.terminated = true;
         this.val = org;
         this.ind = this.opt = this.rst = "";
+        this.terminated = this.trm = this.pxt = true;
+        this.pvn = false;
     }
 
 
+
+    private static final Pattern ARG = Pattern.compile("(-(?:-|W|))?([^=]*)(=?[^=]*)");
+
+    private void parseRegEx() {
+        final Matcher m = ARG.matcher(this.org);
+        if (m.matches()) {
+            this.ind = m.group(1);
+            this.opt = m.group(2);
+            this.val = m.group(3);
+        }
+        if (this.val.startsWith("=")) {
+            this.val = this.val.substring(1);
+        }
+        if (this.ind == null || this.ind.equals("-W")) {
+            this.ind = "";
+        }
+        // TODO fixups, but is it worth it?
+    }
 
     private void parse() {
-        this.ind = this.org.substring(0,1);
-        this.opt = this.org.substring(1);
+        if (this.org.startsWith("--")) {
+            this.ind = "--";
+            optval();
+        } else if (this.org.startsWith("-")) {
+            if (this.org.equals("-")) {
+                this.val = "-";
+                this.pxt = true;
+            } else {
+                this.ind = "-";
+                this.opt = this.org.substring(1,2);
+                this.rst = this.org.substring(2);
+                vendor();
+            }
+        } else {
+            if (this.org.startsWith("=") || !this.org.contains("=")) {
+                this.val = this.org;
+                this.pxt = true;
+            } else {
+                this.opt = beforeEq(this.org);
+                this.val = afterEq(this.org);
+            }
+        }
+        // TODO should we allow long options to be one and/or zero characters long?
     }
 
+    private void vendor() {
+        if (this.opt.equals("W")) {
+            if (this.rst.isEmpty()) {
+                this.pvn = true;
+            } else {
+                this.ind = this.rst = "";
+                optval();
+            }
+        }
+    }
+
+    private void optval() {
+        final String s = this.org.substring(2);
+        this.opt = beforeEq(s);
+        this.val = afterEq(s);
+        if (this.opt.isEmpty() && this.val.isEmpty() && !this.org.contains("=")) {
+            this.trm = this.pxt = true;
+        }
+    }
+
+    static String afterEq(final String s) {
+        int i = s.indexOf('=');
+        if (i < 0) {
+            i = s.length()-1;
+        }
+        return s.substring(i+1);
+    }
+
+    static String beforeEq(final String s) {
+        int i = s.indexOf('=');
+        if (i < 0) {
+            i = s.length();
+        }
+        return s.substring(0,i);
+    }
 
 
     @Override
     public String toString() {
-        String s = "/";
-        if (this.ind.equals("--")) {
-            s += this.ind + this.opt + "=" + this.val;
-            if (!this.rst.isEmpty()) {
-                s += " [" + this.rst + "]";
-            }
-        } else if (this.ind.equals("-")) {
-            s += this.ind + this.opt;
-            if (!this.val.isEmpty()) {
-                s += " " + this.val;
-            }
-            if (!this.rst.isEmpty()) {
-                s += " [" + this.rst + "]";
-            }
-        } else {
-            s += "[" + this.org + "]";
+        String s = "";
+
+        if (!this.opt.isEmpty()) {
+            s += this.opt + "=";
         }
-        s += "/ {" + this.ind + "|" + this.opt + "|" + this.val + "|" + this.rst + "}";
+        s += "'" + this.val + "'";
+
+        s += "  {" + this.ind + "|" + this.opt + "|" + this.val + "}";
+        if (!this.rst.isEmpty()) {
+            s += " [" + this.rst + "]";
+        }
+        if (this.trm) {
+            s += " GNU_TERM";
+        }
+        if (this.pxt) {
+            s += " POSIX_TERM";
+        }
+        if (this.pvn) {
+            s += " POSIX_VENDOR_OPT";
+        }
+
         return s;
     }
 

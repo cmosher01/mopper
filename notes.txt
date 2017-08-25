@@ -1,0 +1,86 @@
+arg: [-|--] [W] [opt] [=] [val]
+
+arg --> key='value' {indicator|key|value} [unparsed] FLAGS
+----------------------------------------------------------
+
+
+
+-a        -->   a= ''    {-|a|}
+
+--aa      -->   aa=''    {--|aa|}
+--aa=     -->   aa=''    {--|aa|}
+aa=       -->   aa=''    {|aa|}
+--aa=v    -->   aa='v'   {--|aa|v}
+-Waa=v    -->   aa='v'   {|aa|v}
+aa=v      -->   aa='v'   {|aa|v}
+
+v         -->      'v'   {||v}     POSIX_TERM
+<space>   -->      ' '   {|| }     POSIX_TERM
+-         -->      '-'   {||-}     POSIX_TERM
+
+
+
+--        -->      ''    {--||}    GNU_TERM POSIX_TERM
+
+-W        -->   W= ''    {-|W|}    POSIX_VENDOR_OPT
+
+
+
+
+
+This is the only one that's ambiguous:
+
+-ab       -->   a= ''    {-|a|}  [b]
+
+could be a='b' or (a='' and b=''):
+
+-a        -->   a= ''    {-|a|}
+-b        -->   b= ''    {-|b|}
+------------------------------------
+-a b      -->   a= 'b'   {-|a|b}
+
+depending on whether option "a" takes a value
+
+
+
+
+
+
+pathological cases, with zero-length option name:
+--=       -->      ''    {--||}
+-W=       -->      ''    {||}
+--=v      -->      'v'   {--||v}
+-W=v      -->      'v'   {||v}
+=         -->      '='   {||=}     POSIX_TERM
+=v        -->      '=v'  {||=v}    POSIX_TERM
+
+
+
+What about "long" options that are only one character long?
+--a=v
+
+
+
+
+
+
+
+
+
+Arguments that affect (or are affected by) other arguments:
+-a consumes one following argument for each expected value (required or optional)
+aa=v only makes sense after a -W
+v will be consumed as a value for a preceding option that expects a value
+  otherwise it causes the termination of option processing (if POSIXLY_CORRECT)
+  (This is what I call the POSIX_TERM flag.)
+-- causes the termination of option processing. (This is what I call the GNU_TERM flag.)
+
+After termination of option processing, all following arguments are taken as standalone values.
+A subtlety: "--" will not be passed to the application, but all other terminating values will be
+(because they are considered VALUES, and as a side affect, terminate option processing, in POSIX).
+
+-abc needs to check it a takes any arguments; if it takes at least one, then "bc" is treated as
+(the first) argument. Otherwise, treat it is "-a", and continue parsing with "-bc"
+
+-W is POSIX's way to handle "vendor options" (which GNU calls "long options"). It consumes one
+following argument (which is required), and treats aa[=v] as option[=value] (similar to --aa[=v]).
