@@ -1,3 +1,10 @@
+The first loop over the list of command line arguments passed into
+the program parses each one according to this chart. There are
+different rules for standard (GNU) mode versus POSIXLY_CORRECT mode.
+
+
+
+
 arg: [-|--] [W] [opt] [=] [val]
 
 arg --> key='value' {indicator|key|value} [unparsed] FLAGS
@@ -9,8 +16,8 @@ arg --> key='value' {indicator|key|value} [unparsed] FLAGS
 
 --aa      -->   aa=''    {--|aa|}
 --aa=     -->   aa=''    {--|aa|}
-aa=       -->   aa=''    {|aa|}
 --aa=v    -->   aa='v'   {--|aa|v}
+aa=       -->   aa=''    {|aa|}
 -Waa=v    -->   aa='v'   {|aa|v}
 aa=v      -->   aa='v'   {|aa|v}
 
@@ -26,6 +33,26 @@ v         -->      'v'   {||v}     POSIX_TERM
 
 
 
+pathological cases, with zero-length option name:
+--=       -->      ''    {--||}
+-W=       -->      ''    {||}
+--=v      -->      'v'   {--||v}
+-W=v      -->      'v'   {||v}
+=         -->      '='   {||=}     POSIX_TERM
+=v        -->      '=v'  {||=v}    POSIX_TERM
+
+
+
+But, if we have terminated option processing, then everything
+is interpreted as a simple value:
+X         -->      'X'   {||X}     GNU_TERM POSIX_TERM
+(for any string X)
+
+
+
+What about "long" options that are only one character long?
+--a=v
+
 
 
 This is the only one that's ambiguous:
@@ -37,27 +64,48 @@ could be a='b' or (a='' and b=''):
 -a        -->   a= ''    {-|a|}
 -b        -->   b= ''    {-|b|}
 ------------------------------------
--a b      -->   a= 'b'   {-|a|b}
+-ab       -->   a= 'b'   {-|a|b}
 
 depending on whether option "a" takes a value
 
+if a has at least one value (optional or required)
+then -ab --> a='b'
+else --> -ab --> a='' and add new following arg "b" (which
+     will be parsed subsequently)
 
 
 
 
 
-pathological cases, with zero-length option name:
---=       -->      ''    {--||}
--W=       -->      ''    {||}
---=v      -->      'v'   {--||v}
--W=v      -->      'v'   {||v}
-=         -->      '='   {||=}     POSIX_TERM
-=v        -->      '=v'  {||=v}    POSIX_TERM
+
+Do we need to check for "aa=[v]" (POSIX vendor option) that does
+not follow a "-W"? (We probably do; and, if so, where?)
 
 
 
-What about "long" options that are only one character long?
---a=v
+The next loop looks for
+args that need (or want) a value, and that value is
+in the following arg. This needs special handling for
+POSIXLY_CORRECT.
+for each arg
+    n = number of values for arg
+       POSIX mode: number of required arguments
+       non-POSIX mode: number of arguments (optional or required)
+    while n--
+      consume one following arg, and add it to the list
+      of values for this arg
+
+
+The next loop looks for terminating args, and terminates the rest.
+terminate = false
+for each arg
+    if arg is (POSIX: POSIX_TERM; non-POSIX: GNU_TERM)
+        terminate = true
+    if terminate
+        arg.terminate()
+        if arg has multiple values, then remove them each from
+            that arg, and add them as standalone args
+
 
 
 
@@ -84,3 +132,38 @@ A subtlety: "--" will not be passed to the application, but all other terminatin
 
 -W is POSIX's way to handle "vendor options" (which GNU calls "long options"). It consumes one
 following argument (which is required), and treats aa[=v] as option[=value] (similar to --aa[=v]).
+
+The other POSIXLY_CORRECT action involves "options with an optional value" (as opposed to options with
+a required value). POSIX standard says the optional value will only be recognized if it comes
+directly after the option, with no space. So:
+-avalue implies a='value', but
+-a value implies a='' followed by a non-option "value"
+
+
+
+
+
+for the notes below:
+-a(r,o) indicates option -a, that takes r required and o optional values.
+P indicates only in POSIXLY_CORRECT mode, and
+G indicates only in non-POSIXLY_CORRECT mode
+(otherwise pertains to both modes)
+
+-a(0,0) v  -->  a='', 'v'
+
+-a(1,0) v  -->  a='v'
+-a(1,0)  -->  error
+G -a(0,1) v  -->  a='v'
+P -a(0,1) v  -->  a'', "v"(reprocess)
+-a(0,1)  -->  a=''
+
+-a(2,0) v w  -->  a='v'+'w'
+-a(2,0) v  -->  error
+G -a(1,1) v w  -->  a='v'+'w'
+P -a(1,1) v w  -->  a='v', "w"(reprocess)
+-a(1,1) v  -->  a='v'
+G -a(0,2) v w  -->  a='v'+'w'
+P -a(0,2) v w  -->  a='', "v w"(reprocess)
+G -a(0,2) v  -->  a='v'
+P -a(0,2) v  -->  a='', "v"(reprocess)
+-a(0,2)  -->  a=''
