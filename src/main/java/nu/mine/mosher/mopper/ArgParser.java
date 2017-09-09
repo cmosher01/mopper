@@ -85,8 +85,10 @@ public final class ArgParser<T> {
                 i.previous();
                 break;
             } else {
-                i.remove();
-                a.addValue(next);
+                if (a.getValue().isEmpty()) {
+                    i.remove();
+                    a.addValue(next);
+                }
             }
         }
     }
