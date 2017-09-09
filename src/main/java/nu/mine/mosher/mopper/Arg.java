@@ -117,7 +117,7 @@ class Arg {
 
         final int df = atLeast - r.size();
         if (df > 0) {
-            r.addAll(Collections.nCopies(df, ""));
+            r.addAll(Collections.nCopies(df, null));
         }
 
         return r.toArray();
