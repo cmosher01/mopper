@@ -11,7 +11,7 @@ class Arg {
 
     public Arg(final String arg) {
         this.arg = arg;
-        if (this.arg.isEmpty()) {
+        if (this.arg == null) {
             throw new IllegalArgumentException();
         }
     }

@@ -76,4 +76,14 @@ public class TestMopper {
         assertEquals("FOO", o.update);
         assertTrue(o.x);
     }
+
+    @Test
+    void bug_2() {
+        final T1 o = new T1();
+        final ArgParser<T1> uut = new ArgParser<>(o);
+
+        assertNull(o.update);
+        uut.parse("-u", "");
+        assertEquals("", o.update);
+    }
 }
