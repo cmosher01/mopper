@@ -70,7 +70,7 @@ depending on whether option "a" takes a value
 
 if a has at least one value (optional or required)
 then -ab --> a='b'
-else --> -ab --> a='' and add new following arg "b" (which
+else -ab --> a='' and add new following arg "b" (which
      will be parsed subsequently)
 
 
@@ -127,7 +127,7 @@ After termination of option processing, all following arguments are taken as sta
 A subtlety: "--" will not be passed to the application, but all other terminating values will be
 (because they are considered VALUES, and as a side affect, terminate option processing, in POSIX).
 
--abc needs to check it a takes any arguments; if it takes at least one, then "bc" is treated as
+-abc needs to check if a takes any arguments; if it takes at least one, then "bc" is treated as
 (the first) argument. Otherwise, treat it is "-a", and continue parsing with "-bc"
 
 -W is POSIX's way to handle "vendor options" (which GNU calls "long options"). It consumes one
