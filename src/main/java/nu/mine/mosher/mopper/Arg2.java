@@ -1,5 +1,7 @@
 package nu.mine.mosher.mopper;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,6 +17,8 @@ public class Arg2 {
     private boolean trm;
     private boolean pxt;
     private boolean pvn;
+
+    private final List<String> values = new ArrayList<>(2);
 
 
 
@@ -95,7 +99,7 @@ public class Arg2 {
             optval();
         } else if (this.org.startsWith("-")) {
             if (this.org.equals("-")) {
-                this.val = "-";
+                this.val = this.org;
                 this.pxt = true;
             } else {
                 this.ind = "-";
