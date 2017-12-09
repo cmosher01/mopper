@@ -1,7 +1,4 @@
 buildscript {
-    repositories {
-        mavenCentral()
-    }
     dependencies {
         classpath group: 'org.junit.platform', name: 'junit-platform-gradle-plugin', version: 'latest.integration'
     }
@@ -10,14 +7,6 @@ buildscript {
 plugins {
     id 'org.asciidoctor.gradle.asciidoctor' version '1.5.1'
     id 'org.asciidoctor.convert' version '1.5.2'
-}
-
-repositories {
-    mavenLocal()
-    mavenCentral()
-    maven {
-        url 'http://mosher.mine.nu/maven'
-    }
 }
 
 apply plugin: 'java'
@@ -53,7 +42,13 @@ publishing {
         }
     }
     repositories {
-        mavenLocal()
+        maven {
+            url "${nexusUrl}/repository/maven-snapshots/"
+            credentials {
+                username nexusUsername
+                password nexusPassword
+            }
+        }
     }
 }
 
