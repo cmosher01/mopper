@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings("WeakerAccess")
-public class TestMopper {
+public class MopperTests {
     public static class T1 {
         public String update;
         public boolean x;

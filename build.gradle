@@ -1,56 +1,29 @@
 buildscript {
+    repositories {
+        mavenCentral()
+    }
     dependencies {
-        classpath group: 'org.junit.platform', name: 'junit-platform-gradle-plugin', version: 'latest.integration'
+        classpath group: 'org.junit.platform', name: 'junit-platform-gradle-plugin', version: 'latest.release'
     }
 }
 
-plugins {
-    id 'org.asciidoctor.gradle.asciidoctor' version '1.5.1'
-    id 'org.asciidoctor.convert' version '1.5.2'
+repositories {
+    mavenCentral()
 }
 
 apply plugin: 'java'
 apply plugin: 'org.junit.platform.gradle.plugin'
 
-junitPlatform {
-    filters {
-        engines {
-            include 'junit-jupiter'
-        }
-        includeClassNamePattern '.*'
-    }
-    enableStandardTestTask true
-}
-
 dependencies {
-    testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: 'latest.integration'
-    testRuntime group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: 'latest.integration'
+    testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: 'latest.release'
+    testCompileOnly group: 'org.apiguardian', name: 'apiguardian-api', version: 'latest.release'
+    testRuntime group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: 'latest.release'
 }
 
-apply plugin: 'org.asciidoctor.convert'
-
-asciidoctor {
-    attributes 'source-highlighter': 'coderay'
+junitPlatform {
+    details 'tree'
 }
 
-apply plugin: 'maven-publish'
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
-        }
-    }
-    repositories {
-        maven {
-            url "${nexusUrl}/repository/maven-snapshots/"
-            credentials {
-                username nexusUsername
-                password nexusPassword
-            }
-        }
-    }
-}
-
+sourceCompatibility = 1.8
 group = 'nu.mine.mosher.mopper'
 version = '1.0.0-SNAPSHOT'
