@@ -9,3 +9,5 @@ deploy:
   user: $BINTRAY_USERNAME
   key: $BINTRAY_API_KEY
   skip_cleanup: true
+  on:
+    tags: true
