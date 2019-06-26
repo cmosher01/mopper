@@ -3,7 +3,6 @@ dist: xenial
 language: java
 before_deploy:
   - ./gradlew generatePomFileForMavenPublication
-  - ls -alR build
 deploy:
   provider: bintray
   file: descriptor.json
