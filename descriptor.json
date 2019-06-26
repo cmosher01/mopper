@@ -1,0 +1,23 @@
+{
+    "package": {
+        "name": "mopper",
+        "repo": "maven",
+        "subject": "cmosher01",
+        "vcs_url": "https://github.com/cmosher01/mopper",
+        "licenses": [
+            "GPL-3.0"
+        ]
+    },
+    "version": {
+        "name": "1.0.0-SNAPSHOT"
+    },
+    "files": [ {
+            "includePattern": "build/libs/(.*)",
+            "uploadPattern": "nu/mine/mosher/mopper/mopper/1.0.0-SNAPSHOT/$1"
+        }, {
+            "includePattern": "publications/maven/.*",
+            "uploadPattern": "nu/mine/mosher/mopper/mopper/1.0.0-SNAPSHOT/mopper-1.0.0-SNAPSHOT.pom"
+        }
+    ],
+    "publish": true
+}

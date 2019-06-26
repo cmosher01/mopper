@@ -1,3 +1,7 @@
+plugins {
+    id 'maven-publish'
+}
+
 repositories {
     mavenCentral()
     jcenter()
@@ -12,6 +16,14 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+        }
+    }
 }
 
 sourceCompatibility = 1.8
