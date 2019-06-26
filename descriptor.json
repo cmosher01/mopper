@@ -9,14 +9,14 @@
         ]
     },
     "version": {
-        "name": "1.0.0-SNAPSHOT"
+        "name": "1.0.0"
     },
     "files": [ {
             "includePattern": "build/libs/(.*)",
-            "uploadPattern": "nu/mine/mosher/mopper/mopper/1.0.0-SNAPSHOT/$1"
+            "uploadPattern": "nu/mine/mosher/mopper/mopper/1.0.0/$1"
         }, {
             "includePattern": "publications/maven/.*",
-            "uploadPattern": "nu/mine/mosher/mopper/mopper/1.0.0-SNAPSHOT/mopper-1.0.0-SNAPSHOT.pom"
+            "uploadPattern": "nu/mine/mosher/mopper/mopper/1.0.0/mopper-1.0.0.pom"
         }
     ],
     "publish": true
