@@ -18,14 +18,20 @@ test {
     useJUnitPlatform()
 }
 
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allJava
+    archiveClassifier = 'sources'
+}
+
 publishing {
     publications {
         maven(MavenPublication) {
             from components.java
+            artifact sourcesJar
         }
     }
 }
 
-sourceCompatibility = 1.8
 group = 'nu.mine.mosher.mopper'
-version = '1.0.1'
+version = '1.0.2'
+sourceCompatibility = 1.8
