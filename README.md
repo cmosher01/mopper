@@ -1,5 +1,11 @@
 # Mopper
 
+Copyright © 2017, 2019, Christopher Alan Mosher, Shelton, Connecticut, USA, <cmosher01@gmail.com>.
+
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=CVSSQ2BWDCKQ2)
+[![License](https://img.shields.io/github/license/cmosher01/mopper.svg)](https://www.gnu.org/licenses/gpl.html)
+
+
 Mopper is a command-line option processor for Java programs.
 
 This software is distributed under the
@@ -10,13 +16,12 @@ Include as dependency in gradle:
 
 ```groovy
 repositories {
-    maven {
-        url 'http://mosher.mine.nu/nexus/repository/maven-public/'
-    }
+    mavenCentral()
+    jcenter()
 }
 
 dependencies {
-    compile group: 'nu.mine.mosher.mopper', name: 'mopper', version: 'latest.integration'
+    implementation group: 'nu.mine.mosher.mopper', name: 'mopper', version: 'latest.integration'
 }
 ```
 
