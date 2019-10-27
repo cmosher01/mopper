@@ -167,3 +167,55 @@ P -a(0,2) v w  -->  a='', "v w"(reprocess)
 G -a(0,2) v  -->  a='v'
 P -a(0,2) v  -->  a='', "v"(reprocess)
 -a(0,2)  -->  a=''
+
+
+
+
+
+
+
+
+---
+
+Or..... using only GNU-style options.
+
+Each argument will be either an option (indicated by starting with "--"), or an argument (if it starts with any other character).
+
+-- (end of option processing, any arguments after this will not be treated as options even if they start with "--")
+--NAME (option is specified, with no value)  NAME(Optional.empty)
+--NAME=VALUE (option is specified, with value) NAME(VALUE)
+--NAME=  (use to override (erase) a default value for NAME) NAME("")
+--=VALUE  (error)
+--=  (error)
+VALUE (argument, same as no-name option)  __(VALUE)
+"" (empty value... is this possible?) __("")
+DO NOT ALLOW:   --NAME VALUE  (that is, there must be an equal sign)
+
+constraints:
+NAME can only contain ASCII (0x21-0x7E), except =, and it cannot be "__"
+cannot have two methods with the same name (regardless of return type or arguments)
+
+If class has NAME() method with no args
+    --NAME calls NAME()
+    --NAME=VALUE is error
+    --NAME= is error
+If class has NAME(Optional<String>) method
+    --NAME calls NAME(Optional.empty)
+    --NAME=VALUE calls NAME(VALUE)
+    --NAME= calls NAME("")
+
+If class has __(String) method
+    VALUE calls __(VALUE)
+
+only allowed methods:
+void __(String value) {}
+void NAME() {}
+void NAME(Optional<String> optionalValue) {}
+
+methods that will never be called:
+__()
+__(AnythingOtherThanOneString)
+NAME(AnythingOtherThanOneOptionalString)
+AnythingOtherThanVoid NAME(anything)
+
+What about -- -- ? The first -- turns off option processing, therefore the second -- is treated as an argument???

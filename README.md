@@ -5,6 +5,14 @@ Copyright © 2017, 2019, Christopher Alan Mosher, Shelton, Connecticut, USA, <cm
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=CVSSQ2BWDCKQ2)
 [![License](https://img.shields.io/github/license/cmosher01/mopper.svg)](https://www.gnu.org/licenses/gpl.html)
 
+This project is now _deprecated_, and is being archived. (Artifacts are still available at
+[Bintray](https://bintray.com/cmosher01/maven/mopper).)
+
+Work had started on a Version 2, in the Arg2.java source file. But that stalled, and the entire project is (for now, at least) on hold.
+
+[Gnopt](https://github.com/cmosher01/Gnopt) is the replacement library. It handles GNU-style arguments like `--log=debug`
+
+---
 
 Mopper is a command-line option processor for Java programs.
 
